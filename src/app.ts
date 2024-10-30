@@ -7,7 +7,8 @@ import { db, store } from "./config";
 import AppError from "./utils/appError";
 import path from "path";
 import appRoutes from "./routes/app.route";
-
+import userRoutes from "./routes/user.route";
+import productRoutes from "./routes/product.route";
 
 dotenv.config();
 
@@ -40,6 +41,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Routes
 app.use("/api/v1", appRoutes);
+app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/products", productRoutes);
 
 app.all("*", (req, res, next) => {
   next(
