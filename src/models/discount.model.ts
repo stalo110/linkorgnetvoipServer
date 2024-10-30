@@ -19,7 +19,7 @@ const discountSchema: Schema<IDiscount> = new Schema(
         discountType: {
             type: String,
             required: true,
-            enum: ['percentage', 'fixed'],
+            enum: ["percentage", "fixed"],
         },
         amount: {
             type: Number,

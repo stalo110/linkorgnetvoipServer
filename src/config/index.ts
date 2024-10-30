@@ -1,7 +1,7 @@
 import mongoose, { Connection } from "mongoose";
 import session from "express-session";
 import MongoDBSessionStore from "connect-mongodb-session";
-require('dotenv').config();
+require("dotenv").config();
 
 const mongoDBURI: string = process.env.MONGODB_URI !== undefined ? process.env.MONGODB_URI : "mongodb://127.0.0.1:27017/linkorgvoipdb";
 
@@ -26,11 +26,11 @@ db.once("open", () => {
 const MongoDBStore = MongoDBSessionStore(session);
 const store = new MongoDBStore({
   uri: mongoDBURI,
-  collection: 'sessions' 
+  collection: "sessions" 
 });
 
-store.on('error', function(error: any) { 
-  console.error('Session Store Error:', error);
+store.on("error", function(error: any) { 
+  console.error("Session Store Error:", error);
 });
 
 export { db, store };
