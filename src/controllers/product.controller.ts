@@ -1,5 +1,5 @@
-import { Request, Response } from 'express';
-import Product, { IProduct } from '../models/product.model'; 
+import { Request, Response } from "express";
+import Product, { IProduct } from "../models/product.model"; 
 
 
 export const getAllProducts = async (req: Request, res: Response): Promise<void> => {
@@ -7,7 +7,7 @@ export const getAllProducts = async (req: Request, res: Response): Promise<void>
         const products: IProduct[] = await Product.find();
         res.status(200).json(products);
     } catch (error:any) {
-        res.status(500).json({ message: 'Error retrieving products', error: error.message });
+        res.status(500).json({ message: "Error retrieving products", error: error.message });
     }
 };
 
@@ -17,12 +17,12 @@ export const getProductById = async (req: Request, res: Response): Promise<void>
     try {
         const product: IProduct | null = await Product.findById(id);
         if (!product) {
-            res.status(404).json({ message: 'Product not found' });
+            res.status(404).json({ message: "Product not found" });
             return;
         }
         res.status(200).json(product);
     } catch (error:any) {
-        res.status(500).json({ message: 'Error retrieving product', error: error.message });
+        res.status(500).json({ message: "Error retrieving product", error: error.message });
     }
 };
 
@@ -40,7 +40,7 @@ export const addNewProduct = async (req: Request, res: Response): Promise<void> 
         const savedProduct: IProduct = await newProduct.save();
         res.status(201).json(savedProduct);
     } catch (error:any) {
-        res.status(400).json({ message: 'Error adding product', error: error.message });
+        res.status(400).json({ message: "Error adding product", error: error.message });
     }
 };
 
@@ -55,11 +55,11 @@ export const updateProduct = async (req: Request, res: Response): Promise<void> 
             runValidators: true, 
         });
         if (!updatedProduct) {
-            res.status(404).json({ message: 'Product not found' });
+            res.status(404).json({ message: "Product not found" });
             return;
         }
         res.status(200).json(updatedProduct);
     } catch (error:any) {
-        res.status(400).json({ message: 'Error updating product', error: error.message });
+        res.status(400).json({ message: "Error updating product", error: error.message });
     }
 };
