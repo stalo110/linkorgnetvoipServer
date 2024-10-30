@@ -1,37 +1,62 @@
-import createError from 'http-errors';
-import express, {Request, Response, NextFunction } from 'express';
-import path from 'path';
-import cookieParser from 'cookie-parser';
-import logger from 'morgan';
-import indexRouter from './routes/index';
-import usersRouter from './routes/users';
+import express, { Application } from "express";
+import bodyParser from "body-parser";
+import dotenv from "dotenv";
+import cors from "cors";
+import session from "express-session";
+import { db, store } from "./config";
+import AppError from "./utils/appError";
+import path from "path";
+import appRoutes from "./routes/app.route";
 
-const app = express();
 
+dotenv.config();
 
-app.use(logger('dev'));
+const app: Application = express();
+
+app.use(session({
+  secret: process.env.SECRET_KEY!,
+  resave: false,
+  saveUninitialized: false,
+  store: store,
+  cookie: {
+    secure: process.env.NODE_ENV === "production", 
+    httpOnly: true,
+    maxAge: 1000 * 60 * 60 // 1 hour
+  }
+}));
+
+const corsOptions = {
+  origin: ["http://localhost:3000", "https://linkorgvoip.vercel.app"]
+};
+app.use(cors(corsOptions));
+
+app.use(cors(corsOptions));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
 
-// catch 404 and forward to error handler
-app.use(function (req: Request, res: Response, next: NextFunction) {
-  next(createError(404));
+// Routes
+app.use("/api/v1", appRoutes);
+
+app.all("*", (req, res, next) => {
+  next(
+    new AppError(
+      `The route ${req.originalUrl} with the ${req.method} method does not exist on this server! 💨`,
+      404
+    )
+  );
 });
 
-// error handler
-app.use(function(err: createError.HttpError, req: Request, res: Response, next: NextFunction) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+db.on("error", console.error.bind(console, "Mongodb Connection Error:"));
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+
+
+const PORT: number | string = process.env.PORT || 4000;
+app.listen(PORT, () => {
+  console.log(`Server is running on ${PORT}`);
 });
 
 export default app;
